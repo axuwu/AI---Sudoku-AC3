@@ -1,4 +1,4 @@
-# AI---Sudoku-AC3
+# AI-Sudoku-AC3
 AI - Solving a 9x9 Sudoku using AC3 algorithm
 
 Objetivo: Resolver a grelha 9x9 do Sudoku
