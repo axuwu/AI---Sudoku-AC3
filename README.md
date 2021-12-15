@@ -46,6 +46,7 @@ Each cell has 20 neighbors:
 - 8 neighbors from the Horizontal Line
 - 8 neighbors from the Vertical line
 - 4 neighbors from the Same Square
+
 Why u ask? Well the cell cant count itself as neighbor and neither can he recount the same cells as neighbors (so no repeats), leaving us with so called 20 neighbors
 
 To recude the domains we will have to arc reduce them
