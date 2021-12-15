@@ -24,7 +24,7 @@ matrix = np.array([line1,
 
 
 # Method to fill the domain of each cell from the Sudoku
-# Returns a 2d-Array that:
+# Returns a 2d-Array that: 
 # [0] = cell (coordinateX, coordinateY)
 # [1] = domain
 def fillDomain():
@@ -89,66 +89,44 @@ def sameSquare(coordX, coordY, valueX, valueY):
         return False
 
 
-# Function to get either coordinate x or y from a block of Sudoku
-def getCoord(block, coord):
-    gottenNumber = 0
-    if (coord == "x") and (len(block) == 2):
-        gottenNumber = block[0]
-    elif (coord == "y") and (len(block) == 2):
-        gottenNumber = block[1]
-    else:
-        return 0
-    return gottenNumber
+# Function to get both coordinates x and y from a cell of Sudoku
+def getCoord(cell):
+    coordX = cell[0]
+    coordY = cell[1]
+    return coordX, coordY
 
 
-# arc reducing
-# checks the size of the cells and compares them
-# if the size isn't 1 then the domain is still large
-def checkSize(constraint, cell1, cell2):
-    # 1st cell
-    row1 = getCoord(cell1, "x")
-    column1 = getCoord(cell1, "y")
-    # 2nd cell
-    row2 = getCoord(cell2, "x")
-    column2 = getCoord(cell2, "y")
-    aux = [row1, column1]
-    # csp = [ [ cell[coordX, coordY] ], [ domain[...] ] ]
-    if len(constraint[1][constraint[0].index([row2, column2])]) == 1:
-        return True
-    return False
-
-
-# arc reducing
-# checks the cells themselves
-# if the cell1 is same as cell2
-def checkCell(constraint, cell1, cell2):
-    # 1st cell
-    row1 = getCoord(cell1, "x")
-    column1 = getCoord(cell1, "y")
-    # 2nd cell
-    row2 = getCoord(cell2, "x")
-    column2 = getCoord(cell2, "y")
-    aux = [row1, column1]
-    # csp = [ [ cell[coordX, coordY] ], [ domain[...] ] ]
-    for i in constraint[1][constraint[0].index(aux)]:  # iterates the domain of the cell
-        i = [i]
-        if len(constraint[1][constraint[0].index([row2, column2])]) == 1:
-            return True
-    return False
-
-
-# Function Revise
-# Given constraint C_ij remove from the domain D_i all values that have no support in D_j
-# returns true if we revise the domain of i
+# Function Arc Reduce
+# Given a constraint remove from the domain D_c1 all values that have no support in D_c2
+# Returns true if it the domain of c1 gets revised
 def revise(constraint, cell1, cell2):
-    # boolean flag
     revised = False
+    # 1st cell
+    row1, column1 = getCoord(cell1)
+    # 2nd cell
+    row2, column2 = getCoord(cell2)
 
-    # find a value vy in D(y) such that vx and vy satisfy the constraint R2(x, y)
-    if (checkSize(constraint, cell1, cell2)) and (checkCell(constraint, cell1, cell2)):
-        # TODO: removing domains
-        revised = True
+    # find a value vy in D(y) such that vx and vy satisfy the constraint c2(x, y)
+
+    # i as in possible values of the domain
+    for i in constraint[1][constraint[0].index(cell1)]:
+        value = [i]
+        
+        #arc reducing
+        # checks the size of the domain  -> if the size>1 then the domain is still isn't revised aka unoccupied cell (0)
+        # checks the cells themselves -> if the cell1 is same as cell2
+        if (len(constraint[1][constraint[0].index([row2, column2])]) == 1) and \
+                (value == constraint[1][constraint[0].index([row2, column2])]):
+            # removes the given value of Cell2's Domain in the Domain of Cell1
+            constraint[1][constraint[0].index([row1, column1])].pop(constraint[1][constraint[0].
+                                                                    index([row1, column1])].index(value[0]))
+
+            revised = True
+
     return revised
+
+
+# --------------------------------------------
 
 
 csp = fillDomain()  # csp = [[cell[x,y]], [domain[...]]]
@@ -156,8 +134,9 @@ csp = fillDomain()  # csp = [[cell[x,y]], [domain[...]]]
 # blocks are cells
 block1 = [0, 0]
 block2 = [0, 1]
-block3 = [0, 2]
-# Example: will say no bc he has same domain of 1st cell
+block3 = [0, 2
+
+# Example: will say FALSE bc he has same domain of 1st cell
 print("domains are same then the revise is: ", revise(csp, block1, block2))
-# Example: will say yes bc he will remove the number 3 from the domain of 1st cell
+# Example: will say TRUE bc he will remove the number 3 from the domain of 1st cell
 print("domains are different then the revise is: ", revise(csp, block1, block3))
